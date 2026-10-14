@@ -6,13 +6,16 @@ import Cup, { type CupType } from "./components/Cup";
 import Catrista, { type Expression } from "./components/Catrista";
 import Customer, {type Order } from "./components/Customer";
 
+// Load the pixel font used by the game and intro screens.
 const pixelify = Pixelify_Sans({
   subsets: ["latin"],
 });
 
+// All game positions use this fixed scene size. The whole scene scales to fit the window.
 const SCENE_WIDTH = 1920;
 const SCENE_HEIGHT = 1080;
 
+// Shared styling for the intro navigation buttons.
 const buttonClasses = `
   border-4 border-[#513323]
   bg-[#c77b47] px-6 py-3 font-bold text-[#fff1d6]
@@ -22,6 +25,7 @@ const buttonClasses = `
   focus-visible:outline-offset-4 focus-visible:outline-[#513323]
 `;
 
+// The rules screen uses this list to pair each cup sprite with its explanation.
 const cupRules: {
   type: CupType;
   title: string;
@@ -55,38 +59,55 @@ const cupRules: {
 ];
 
 export default function Home() {
+  // Intro progresses through welcome, intro, and rules. null means the game is active.
   const [screen, setScreen] = useState<
     "welcome" | "intro" | "rules" | null
   >("welcome");
 
+  // The barista reacts to successful deliveries, mistakes, and customers losing patience.
   const [expression, setExpression] = useState<Expression>("neutral");
+  // Store active customer IDs. Stable IDs preserve each customer and order when others leave.
   const [customers, setCustomers] = useState<number[]>([]);
+  // A ref supplies unique IDs without resetting on each render.
   const nextCustomerId = useRef(0);
+  // null hides the scene until its initial scale has been calculated.
   const [sceneScale, setSceneScale] = useState<number | null>(null);
+  // Held items are rendered beside the pointer. Shelf buttons allow only one item at a time.
   const [carryingFish, setCarryingFish] = useState(false);
+  // Pointer coordinates are measured in screen pixels, outside the scaled game scene.
   const [mouse, setMouse] = useState({ x: 0, y: 0 });
+  // Each customer reports its generated order; this record lets delivery handlers check it.
   const [orders, setOrders] = useState<Record<number, Order>>({});
+  // Track partial deliveries by customer ID so fish and drinks can be served in either order.
   const [fishDelivered, setFishDelivered] = useState<
     Record<number, boolean>
   >({});
+  // null means no cup is held; otherwise the value selects the visible cup sprite.
   const [carryingCup, setCarryingCup] = useState<CupType | null>(null);
+  // The machine holds a separate cup while ingredients are added.
   const [machineCup, setMachineCup] = useState<CupType | null>(null);
   const [drinkDelivered, setDrinkDelivered] = useState<
     Record<number, boolean>
   >({});
+  // Complete orders earn 10 points. Wrong items and expired orders lose 5, with a floor of zero.
   const [score, setScore] = useState(0);
+  // Store an absolute expiry time for each customer, fixed when that customer arrives.
   const [deadlines, setDeadlines] = useState<Record<number, number>>({});
+  // A shared clock updates the countdowns and expiry checks while the game is active.
   const [now, setNow] = useState(() => Date.now());
 
+  // Timing values are milliseconds. Higher scores shorten the gap between arrivals.
   const arrivalInterval =
   score >= 100 ? 2000 : score >= 50 ? 5000 : 6000;
 
+  // New customers wait 30 seconds below 50 points, then 15 seconds at higher scores.
   const patience =
   score >= 100 ? 15000 : score >= 50 ? 15000 : 30000;
 
   // Keep the latest difficulty available to the arrival timer.
   const difficultyRef = useRef({ arrivalInterval, patience });
 
+  // The long-running arrival timer reads this ref instead of a stale customer count.
   const customerCountRef = useRef(0);
 
   useEffect(() => {
@@ -97,6 +118,7 @@ export default function Home() {
     difficultyRef.current = { arrivalInterval, patience };
   }, [arrivalInterval, patience]);
 
+  // Clicking the tray transfers a cup between the player and machine when the destination is empty.
   function handleMachineCup() {
     if (carryingFish) return;
 
@@ -114,6 +136,7 @@ export default function Home() {
     }
   }
 
+  // Coffee or tea fills an empty cup; milk converts either drink into its milk variant.
   function fillCup(ingredient: "coffee" | "tea" | "milk") {
     setMachineCup((current) => {
       if (current === null) return null;
@@ -131,11 +154,13 @@ export default function Home() {
         if (current === "tea") return "milkTea";
       }
 
+      // Unsupported ingredient combinations leave the drink unchanged.
       return current;
     });
   }
 
   useEffect(() => {
+    // Reset happy or sad reactions after one second; clear the old timeout when the expression changes.
     if ((expression === "neutral")) return;
 
     const timeout = window.setTimeout(() => {
@@ -145,11 +170,13 @@ export default function Home() {
     return () => window.clearTimeout(timeout);
   }, [expression]);
 
+  // Keep this callback stable so passing it to Customer does not repeatedly regenerate its order.
   const registerOrder = useCallback((id: number, order: Order) => {
     setOrders((current) => ({ ...current, [id]: order }));
   }, []);
 
   useEffect(() => {
+    // Listen for pointer movement only while the player is holding an item.
     if (!carryingFish && carryingCup === null) return;
 
     function followMouse(event: PointerEvent) {
@@ -161,6 +188,7 @@ export default function Home() {
     return () => window.removeEventListener("pointermove", followMouse);
   }, [carryingFish, carryingCup]);
 
+  // Deliver fish, reject an incorrect item, or finish an order whose drink is already served.
   function giveFish(customerId: number) {
     if (!carryingFish) return;
 
@@ -202,6 +230,7 @@ export default function Home() {
         }
       }
 
+  // Match the held cup against the requested drink, then wait for fish if it is still needed.
   function giveCup(customerId: number) {
     if (carryingCup === null) return;
 
@@ -241,6 +270,7 @@ export default function Home() {
   }
 
   useEffect(() => {
+    // Preserve the scene aspect ratio so sprites stay aligned with the background at every window size.
     function resizeScene() {
       setSceneScale(
         Math.min(
@@ -260,6 +290,7 @@ export default function Home() {
   useEffect(() => {
     if (screen !== null) return;
 
+    // First arrival happens on the first timer tick. Later arrivals use the current difficulty.
     let nextArrival = Date.now();
 
     const timer = window.setInterval(() => {
@@ -269,9 +300,11 @@ export default function Home() {
       const difficulty = difficultyRef.current;
       nextArrival = time + difficulty.arrivalInterval;
 
+      // A full queue skips this arrival opportunity; the timer keeps running.
       if (customerCountRef.current >= 5) return;
 
       const id = nextCustomerId.current++;
+      // Reserve the slot immediately, before React renders the new customer.
       customerCountRef.current += 1;
 
       setCustomers((current) => [...current, id]);
@@ -281,6 +314,7 @@ export default function Home() {
       }));
     }, 250);
 
+    // Release the interval when this effect stops or the page unmounts.
     return () => window.clearInterval(timer);
   }, [screen]);
 
@@ -294,6 +328,7 @@ export default function Home() {
       setNow(Date.now());
     }, 100);
 
+    // Release the interval when this effect stops or the page unmounts.
     return () => window.clearInterval(timer);
   }, [screen]);
 
@@ -301,6 +336,7 @@ export default function Home() {
   useEffect(() => {
     if (screen !== null) return;
 
+    // Only active customers count toward timeout penalties; removed customers are ignored.
     const expired = customers.filter(
       (id) => deadlines[id] !== undefined && deadlines[id] <= now
     );
@@ -410,6 +446,7 @@ export default function Home() {
                 <Catrista expression={expression} />
               </div>
 
+              {/* Lay out active customers in queue order. Removing one shifts the remaining customers left. */}
               {customers.map((id, index) => (
                 <div
                   key={id}
@@ -428,6 +465,7 @@ export default function Home() {
                       )}
                     />
 
+                    {/* A transparent button covers the cat and routes the held item to its delivery handler. */}
                     <button
                       type="button"
                       aria-label="Give carried item to this customer"
@@ -469,6 +507,7 @@ export default function Home() {
                 Discard Item
               </button>
 
+              {/* Shelf fish are an unlimited supply. Picking one up disables all shelf pickups until hands are free. */}
               {/* Fish on the counter */}
               <button
                 aria-label="Pick up fish"
@@ -602,6 +641,7 @@ export default function Home() {
                 />
               </button>
 
+              {/* Each shelf button supplies an empty cup; preparation happens on the machine. */}
               {/* Cup shelf */}
               <button
                 type="button"
@@ -781,7 +821,6 @@ export default function Home() {
                 </ul>
 
                 <button
-                  autoFocus
                   onClick={() => setScreen(null)}
                   className={buttonClasses}
                 >
@@ -793,6 +832,7 @@ export default function Home() {
         </div>
       )}
 
+      {/* Render the held fish in screen coordinates. It cannot intercept clicks on customers or the machine. */}
       {screen === null && carryingFish && (
         <img
           src="/Sprites/Fish.png"
@@ -810,6 +850,7 @@ export default function Home() {
         />
       )}
 
+      {/* Scale the held cup to match the scene while following the pointer outside the scene transform. */}
       {screen === null && carryingCup !== null && (
         <div
           className="pointer-events-none fixed z-[60]"
@@ -836,6 +877,7 @@ export default function Home() {
             shadow-[4px_4px_0_0_#513323]
           "
         >
+          {/* Score stays fixed to the window rather than scaling with the scene. */}
           Score: {score}
         </div>
       )}
