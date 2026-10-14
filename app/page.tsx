@@ -94,7 +94,7 @@ export default function Home() {
   // Store an absolute expiry time for each customer, fixed when that customer arrives.
   const [deadlines, setDeadlines] = useState<Record<number, number>>({});
   // A shared clock updates the countdowns and expiry checks while the game is active.
-  const [now, setNow] = useState(() => Date.now());
+  const [now, setNow] = useState(0);
 
   // Timing values are milliseconds. Higher scores shorten the gap between arrivals.
   const arrivalInterval =
