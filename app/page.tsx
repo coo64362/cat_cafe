@@ -82,7 +82,7 @@ export default function Home() {
   score >= 100 ? 2000 : score >= 50 ? 3000 : 4000;
 
   const patience =
-  score >= 100 ? 9000 : score >= 50 ? 9500 : 10000;
+  score >= 100 ? 9500 : score >= 50 ? 10000 : 12000;
 
   // Keep the latest difficulty available to the arrival timer.
   const difficultyRef = useRef({ arrivalInterval, patience });
