@@ -79,10 +79,10 @@ export default function Home() {
   const [now, setNow] = useState(() => Date.now());
 
   const arrivalInterval =
-  score >= 100 ? 3000 : score >= 50 ? 5000 : 6000;
+  score >= 100 ? 2000 : score >= 50 ? 5000 : 6000;
 
   const patience =
-  score >= 100 ? 10000 : score >= 50 ? 10000 : 11000;
+  score >= 100 ? 15000 : score >= 50 ? 15000 : 30000;
 
   // Keep the latest difficulty available to the arrival timer.
   const difficultyRef = useRef({ arrivalInterval, patience });
