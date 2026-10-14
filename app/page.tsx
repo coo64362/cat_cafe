@@ -722,7 +722,7 @@ export default function Home() {
 
                 <p className="mb-6">
                   Your job as Panda, the catrista, is to serve your
-                  kitstumers the correct order. Try to earn as many
+                  kitten customers the correct order. Try to earn as many
                   points as you can!
                 </p>
 
@@ -775,7 +775,7 @@ export default function Home() {
                     />
                     <div>
                       <h3 className="text-xl font-bold">Fish</h3>
-                      <p>Kitstumers may also order fish.</p>
+                      <p>Customers may also order fish.</p>
                     </div>
                   </li>
                 </ul>
