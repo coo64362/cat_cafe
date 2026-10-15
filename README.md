@@ -4,6 +4,8 @@ Complete the fish pickup feature in an existing Cat Cafe game using React’s `u
 
 The game’s artwork, customers, drinks, and movement code are already provided. Your task is to track whether the player is carrying a fish.
 
+View a working version of the game here: https://cat-cafe-snowy.vercel.app/ (website will not work if connected to PawSecure)
+
 ## Learning Outcomes
 
 By the end of this assignment, you will be able to:
