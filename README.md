@@ -1,36 +1,70 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Cat Cafe: Use State Assignment
 
-## Getting Started
+Complete the fish pickup feature in an existing Cat Cafe game using React’s `useState` hook.
 
-First, run the development server:
+The game’s artwork, customers, drinks, and movement code are already provided. Your task is to track whether the player is carrying a fish.
+
+## Learning Outcomes
+
+By the end of this assignment, you will be able to:
+
+- Initialize boolean state using `useState`.
+- Update state in response to a button click.
+- Explain how changing state updates the screen.
+
+## File
+
+**`app/page.tsx`** — complete the sections marked `TODO`.
+
+## Part 1: Initialize State
+
+The file already includes `"use client";` and imports `useState`.
+
+Inside `function Home()`, create a state variable with:
+
+- **`carryingFish`** — stores whether the player is holding a fish.
+- **`setCarryingFish`** — updates that state.
+- An initial value of **`false`**, because the player starts without a fish.
+
+## Part 2: Pick Up a Fish
+
+Find the six buttons with `aria-label="Pick up fish"`, below the comment `{/* Fish on the counter */}`.
+
+Inside each button’s existing `onClick` handler, update `carryingFish` to **`true`**.
+
+Keep the existing `setMouse(...)` code. It positions the fish beside the pointer.
+
+The provided display code will show the held fish automatically when the state becomes `true`.
+
+## Part 3: Discard the Fish
+
+Find the **Discard Item** button.
+
+Inside its existing `onClick` handler, update `carryingFish` to **`false`**.
+
+Keep the existing `setCarryingCup(null)` line so discarding cups continues to work.
+
+## Testing
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Start the game:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open the local address shown in your terminal and click through to **Start Playing**.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Check that:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. The player starts without a fish.
+2. Clicking any shelf fish makes a fish appear beside the pointer.
+3. Moving the pointer moves the held fish.
+4. Clicking **Discard Item** removes the held fish.
+5. You can pick up another fish after discarding one.
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

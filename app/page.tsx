@@ -72,8 +72,13 @@ export default function Home() {
   const nextCustomerId = useRef(0);
   // null hides the scene until its initial scale has been calculated.
   const [sceneScale, setSceneScale] = useState<number | null>(null);
+  
   // Held items are rendered beside the pointer. Shelf buttons allow only one item at a time.
-  const [carryingFish, setCarryingFish] = useState(false);
+  
+  // TODO: Use useState to create carryingFish and setCarryingFish.
+  // Initialize carryingFish to false.
+  
+
   // Pointer coordinates are measured in screen pixels, outside the scaled game scene.
   const [mouse, setMouse] = useState({ x: 0, y: 0 });
   // Each customer reports its generated order; this record lets delivery handlers check it.
@@ -493,7 +498,7 @@ export default function Home() {
                 disabled={!carryingFish && carryingCup === null}
                 onClick={() => {
                   setCarryingCup(null);
-                  setCarryingFish(false);
+                  // TODO: Use setCarryingFish to update the state to false.
                 }}
                 className="
                   absolute bottom-[20px] right-[20px] z-40
@@ -514,7 +519,7 @@ export default function Home() {
                 disabled={carryingFish || carryingCup !== null}
                 onClick={(event) => {
                   setMouse({ x: event.clientX, y: event.clientY });
-                  setCarryingFish(true);
+                  // TODO: Use setCarryingFish to update the state to true.
                 }}
                 className="
                   absolute left-[38%] top-[52%] z-30
@@ -536,7 +541,7 @@ export default function Home() {
                 disabled={carryingFish || carryingCup !== null}
                 onClick={(event) => {
                   setMouse({ x: event.clientX, y: event.clientY });
-                  setCarryingFish(true);
+                  // TODO: Use setCarryingFish to update the state to true.
                 }}
                 className="
                   absolute left-[45%] top-[52%] z-30
@@ -558,7 +563,7 @@ export default function Home() {
                 disabled={carryingFish || carryingCup !== null}
                 onClick={(event) => {
                   setMouse({ x: event.clientX, y: event.clientY });
-                  setCarryingFish(true);
+                  // TODO: Use setCarryingFish to update the state to true.
                 }}
                 className="
                   absolute left-[38%] top-[42%] z-30
@@ -580,7 +585,7 @@ export default function Home() {
                 disabled={carryingFish || carryingCup !== null}
                 onClick={(event) => {
                   setMouse({ x: event.clientX, y: event.clientY });
-                  setCarryingFish(true);
+                  // TODO: Use setCarryingFish to update the state to true.
                 }}
                 className="
                   absolute left-[45%] top-[42%] z-30
@@ -602,7 +607,7 @@ export default function Home() {
                 disabled={carryingFish || carryingCup !== null}
                 onClick={(event) => {
                   setMouse({ x: event.clientX, y: event.clientY });
-                  setCarryingFish(true);
+                  // TODO: Use setCarryingFish to update the state to true.
                 }}
                 className="
                   absolute left-[38%] top-[32%] z-30
@@ -624,7 +629,7 @@ export default function Home() {
                 disabled={carryingFish || carryingCup !== null}
                 onClick={(event) => {
                   setMouse({ x: event.clientX, y: event.clientY });
-                  setCarryingFish(true);
+                  // TODO: Use setCarryingFish to update the state to true.
                 }}
                 className="
                   absolute left-[45%] top-[32%] z-30
